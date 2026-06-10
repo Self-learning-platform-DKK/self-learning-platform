@@ -10,6 +10,7 @@ dist/
 build/
 .turbo/
 .cache/
+*.tsbuildinfo
 
 # NestJS and backend build outputs
 /apps/api/dist/
