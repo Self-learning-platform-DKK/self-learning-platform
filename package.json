@@ -1,0 +1,22 @@
+{
+  "name": "sql-tutor",
+  "version": "2.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n api,web -c blue,green \"npm run dev -w @sql-tutor/api\" \"npm run dev -w @sql-tutor/web\"",
+    "dev:web": "npm run dev -w @sql-tutor/web",
+    "dev:api": "npm run dev -w @sql-tutor/api",
+    "build": "npm run build -w @sql-tutor/shared && npm run build -w @sql-tutor/validation && npm run build -w @sql-tutor/api && npm run build -w @sql-tutor/web",
+    "db:generate": "npm run db:generate -w @sql-tutor/api",
+    "db:push": "npm run db:push -w @sql-tutor/api",
+    "db:seed": "npm run db:seed -w @sql-tutor/api",
+    "legacy:dev": "vite --config legacy/vite.config.js"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
