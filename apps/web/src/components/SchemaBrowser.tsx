@@ -120,7 +120,7 @@ export function SchemaBrowser({ schema, runSQL }: SchemaBrowserProps) {
                       {preview.columns.map((col) => (
                         <th
                           key={col}
-                          className="px-4 py-2 text-left font-semibold text-white/80 whitespace-nowrap"
+                          className="px-4 py-2 text-left font-semibold text-muted whitespace-nowrap"
                         >
                           {col}
                         </th>
@@ -136,7 +136,7 @@ export function SchemaBrowser({ schema, runSQL }: SchemaBrowserProps) {
                         {preview.columns.map((col) => (
                           <td
                             key={col}
-                            className="px-4 py-1.5 text-white/70 whitespace-nowrap max-w-[160px] truncate"
+                            className="px-4 py-1.5 whitespace-nowrap max-w-[160px] truncate"
                           >
                             {String(row[col] ?? 'NULL')}
                           </td>
@@ -159,9 +159,9 @@ export function SchemaBrowser({ schema, runSQL }: SchemaBrowserProps) {
               <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b border-border bg-white/5">
-                    <th className="px-4 py-2 text-left font-semibold text-white/80">Column</th>
-                    <th className="px-4 py-2 text-left font-semibold text-white/80">Type</th>
-                    <th className="px-4 py-2 text-left font-semibold text-white/80">Note</th>
+                    <th className="px-4 py-2 text-left font-semibold text-muted">Column</th>
+                    <th className="px-4 py-2 text-left font-semibold text-muted">Type</th>
+                    <th className="px-4 py-2 text-left font-semibold text-muted">Note</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -170,7 +170,7 @@ export function SchemaBrowser({ schema, runSQL }: SchemaBrowserProps) {
                       key={col.name}
                       className="border-b border-border/50 last:border-0 hover:bg-white/[0.03] transition"
                     >
-                      <td className="px-4 py-1.5 font-mono text-white/90">{col.name}</td>
+                      <td className="px-4 py-1.5 font-mono">{col.name}</td>
                       <td className="px-4 py-1.5">
                         <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase ${getTypeBadge(col.type)}`}>
                           {col.type.split('(')[0]}
