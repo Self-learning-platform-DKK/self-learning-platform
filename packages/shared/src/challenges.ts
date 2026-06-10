@@ -14,7 +14,7 @@ export const CHALLENGE_SEEDS: ChallengeSeed[] = [
     legacyId: 'f1', slug: 'select-everything', title: 'Select Everything', concept: 'SELECT',
     instructions: 'Retrieve every row and column from the employees table.',
     difficulty: 'BEGINNER', dialect: 'SQLITE', xpReward: 10, pathSlug: 'sql-foundations', moduleTitle: 'Getting Started',
-    hints: [{ level: 1, content: 'SELECT * FROM table_name; — the * means "all columns".' }],
+    hints: [{ level: 1, content: 'SELECT * FROM employees; — the * means "all columns".' }],
     validationRules: [
       { type: 'ROW_COUNT', config: { exact: 5 } },
       { type: 'TABLE_USAGE', config: { tables: ['employees'] } },
@@ -456,7 +456,7 @@ export const CHALLENGE_SEEDS: ChallengeSeed[] = [
     legacyId: 's33', slug: 'correlated-subquery-max', title: 'Most Expensive in Category', concept: 'Correlated Subquery',
     instructions: 'For each category, find the product(s) with the highest price. Show category_id, product name, and price, sorted by category_id ASC.',
     difficulty: 'INTERMEDIATE', dialect: 'SQLITE', xpReward: 35, pathSlug: 'sql-subqueries', moduleTitle: 'Correlated Subqueries',
-    hints: [{ level: 1, content: 'WHERE price = (SELECT MAX(price) FROM products p2 WHERE p2.category_id = products.category_id)' }],
+    hints: [{ level: 1, content: 'WHERE p.price = (SELECT MAX(p2.price) FROM products p2 WHERE p2.category_id = p.category_id)' }],
     validationRules: [
       { type: 'ROW_COUNT', config: { exact: 5 } },
     ],
