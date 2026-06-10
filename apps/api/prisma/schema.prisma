@@ -1,0 +1,279 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  username      String    @unique
+  passwordHash  String?
+  role          String    @default("USER")
+  plan          String    @default("FREE")
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  profile       Profile?
+  subscription  Subscription?
+  progress      UserProgress[]
+  attempts      Attempt[]
+  achievements  UserAchievement[]
+  certificates  Certificate[]
+  aiUsage       AIUsage[]
+  byokKeys      BYOKKey[]
+  teamMembers   TeamMember[]
+  analyticsEvents AnalyticsEvent[]
+  examAttempts  ExamAttempt[]
+}
+
+model Profile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  displayName String?
+  avatarUrl   String?
+  bio         String?
+  xp          Int      @default(0)
+  level       Int      @default(1)
+  streak      Int      @default(0)
+  lastActive  DateTime?
+  isPublic    Boolean  @default(true)
+  preferences String   @default("{}")
+  resumeTrack String?
+  resumeChallengeSlug String?
+}
+
+model LearningPath {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String
+  difficulty  String
+  isPremium   Boolean  @default(false)
+  isPublished Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  color       String   @default("#60a5fa")
+  modules     Module[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Module {
+  id        String       @id @default(cuid())
+  pathId    String
+  path      LearningPath @relation(fields: [pathId], references: [id], onDelete: Cascade)
+  title     String
+  sortOrder Int          @default(0)
+  challenges Challenge[]
+}
+
+model Dataset {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?
+  seedSql     String
+  schemaJson  String
+  isPublic    Boolean  @default(true)
+  challenges  Challenge[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Challenge {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  legacyId     String?
+  title        String
+  concept      String
+  instructions String
+  difficulty   String
+  dialect      String   @default("SQLITE")
+  xpReward     Int      @default(10)
+  datasetId    String
+  dataset      Dataset  @relation(fields: [datasetId], references: [id])
+  moduleId     String?
+  module       Module?  @relation(fields: [moduleId], references: [id])
+  solution     String?
+  successMsg   String
+  errorMsg     String
+  isPremium    Boolean  @default(false)
+  isPublished  Boolean  @default(true)
+  aiPrompt     String?
+  hintsJson    String   @default("[]")
+  rulesJson    String   @default("[]")
+  attempts     Attempt[]
+  progress     UserProgress[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model UserProgress {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challengeId String
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  bestXp      Int       @default(0)
+  hintsUsed   Int       @default(0)
+  attempts    Int       @default(0)
+
+  @@unique([userId, challengeId])
+}
+
+model Attempt {
+  id          String    @id @default(cuid())
+  userId      String?
+  user        User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  challengeId String
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  sessionId   String?
+  sql         String
+  passed      Boolean
+  validation  String
+  hintLevel   Int       @default(0)
+  durationMs  Int?
+  createdAt   DateTime  @default(now())
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String
+  icon        String
+  ruleJson    String
+  xpBonus     Int      @default(0)
+  isSecret    Boolean  @default(false)
+  users       UserAchievement[]
+}
+
+model UserAchievement {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievementId String
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  earnedAt      DateTime    @default(now())
+
+  @@unique([userId, achievementId])
+}
+
+model Exam {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  title        String
+  pathSlug     String?
+  durationMin  Int      @default(60)
+  passingScore Int      @default(70)
+  isPremium    Boolean  @default(false)
+  questionsJson String  @default("[]")
+  certificates Certificate[]
+  attempts     ExamAttempt[]
+}
+
+model ExamAttempt {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  examId    String
+  exam      Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  score     Int      @default(0)
+  answersJson String @default("{}")
+  startedAt DateTime @default(now())
+  submittedAt DateTime?
+}
+
+model Certificate {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  examId     String
+  exam       Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  verifyCode String   @unique
+  score      Int
+  issuedAt   DateTime @default(now())
+}
+
+model Subscription {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stripeCustomerId     String?  @unique
+  stripeSubscriptionId String?  @unique
+  plan                 String   @default("FREE")
+  status               String   @default("active")
+  currentPeriodEnd     DateTime?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model Team {
+  id        String       @id @default(cuid())
+  name      String
+  slug      String       @unique
+  plan      String       @default("TEAM")
+  members   TeamMember[]
+  createdAt DateTime     @default(now())
+}
+
+model TeamMember {
+  id       String   @id @default(cuid())
+  teamId   String
+  team     Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role     String   @default("member")
+  joinedAt DateTime @default(now())
+
+  @@unique([teamId, userId])
+}
+
+model BYOKKey {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider     String
+  encryptedKey String
+  keyHint      String
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  @@unique([userId, provider])
+}
+
+model AIUsage {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider  String
+  feature   String
+  tokens    Int      @default(0)
+  usedKey   String
+  createdAt DateTime @default(now())
+}
+
+model AnalyticsEvent {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  sessionId  String
+  event      String
+  properties String   @default("{}")
+  createdAt  DateTime @default(now())
+}
+
+model DailyChallenge {
+  id          String   @id @default(cuid())
+  date        String   @unique
+  challengeId String
+  createdAt   DateTime @default(now())
+}
