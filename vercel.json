@@ -1,0 +1,4 @@
+{
+  "buildCommand": "npm run build -w @sql-tutor/shared && npm run build -w @sql-tutor/validation && npm run build -w @sql-tutor/web",
+  "outputDirectory": "apps/web/.next"
+}
