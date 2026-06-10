@@ -6,7 +6,7 @@ SQL Tutor 2.0 is a production-grade, full-stack monorepo learning platform desig
 
 ---
 
-## 🚀 Key Features & UX Optimizations
+## 🚀 Key Features &  UX Optimizations
 
 ### 1. Unified Hardware Telemetry Console
 * **Full-Screen Edge-to-Edge Grid**: The main dashboard features a borderless, full-screen viewport layout that scales perfectly across devices, presenting database telemetry in a highly engaging hardware console chassis.
