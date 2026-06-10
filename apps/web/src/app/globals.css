@@ -1,0 +1,220 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #0f1117;
+  --surface: #161b27;
+  --surface-border: rgba(255, 255, 255, 0.08);
+  --text-primary: #e8eaf0;
+  --text-muted: rgba(232, 234, 240, 0.45);
+  --accent: #60a5fa;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+input, select, textarea {
+  color: var(--text-primary);
+}
+input::placeholder, textarea::placeholder {
+  color: var(--text-muted);
+}
+
+@keyframes pop {
+  0% { transform: scale(0.4); opacity: 0; }
+  60% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-pop {
+  animation: pop 0.4s ease-out;
+}
+
+/* Premium skeuomorphic console ambient background */
+.console-ambient-bg {
+  background-color: #040605;
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(216, 168, 95, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 85% 85%, rgba(95, 203, 185, 0.05) 0%, transparent 50%),
+    linear-gradient(rgba(216, 168, 95, 0.006) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(216, 168, 95, 0.006) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+  transition: background-color 0.3s ease;
+}
+
+/* Light mode overrides */
+html.light {
+  --bg: #F4EFE5;
+  --surface: #FBF9F4;
+  --surface-border: rgba(168, 126, 67, 0.15);
+  --text-primary: #1C1D1A;
+  --text-muted: #6E6A60;
+  --accent: #A87E43;
+}
+
+html.light body {
+  background-color: #F4EFE5;
+  color: #1C1D1A;
+}
+
+html.light .console-ambient-bg {
+  background-color: #F4EFE5;
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(168, 126, 67, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 85% 85%, rgba(95, 203, 185, 0.08) 0%, transparent 50%),
+    linear-gradient(rgba(168, 126, 67, 0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168, 126, 67, 0.012) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+}
+
+html.light header {
+  background-color: rgba(244, 239, 229, 0.9) !important;
+  border-color: rgba(168, 126, 67, 0.15) !important;
+}
+
+html.light .bg-black {
+  background-color: #F4EFE5 !important;
+}
+
+html.light .bg-surface\/50 {
+  background-color: rgba(251, 249, 244, 0.5) !important;
+}
+
+/* Override dark component panels */
+html.light .bg-zinc-900,
+html.light .bg-zinc-900\/40,
+html.light .bg-zinc-900\/60,
+html.light .bg-zinc-950\/40,
+html.light .bg-zinc-950,
+html.light .bg-\[\#101413\],
+html.light .bg-\[\#101413\]\/60,
+html.light .bg-\[\#101413\]\/30 {
+  background-color: #FBF9F4 !important;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.8), 0 2px 4px rgba(0, 0, 0, 0.03) !important;
+}
+
+/* Screws in light mode */
+html.light .bg-zinc-900.border-zinc-800,
+html.light .absolute.top-5.left-5.w-4.h-4.rounded-full.bg-zinc-900 {
+  background-color: #E2DDD3 !important;
+  border-color: #D1C9BC !important;
+}
+
+/* Override borders */
+html.light .border-zinc-800,
+html.light .border-zinc-850,
+html.light .border-zinc-900,
+html.light .border-zinc-900\/60,
+html.light .border-\[\#D8A85F\]\/35,
+html.light .border-\[\#D8A85F\]\/20,
+html.light .border-\[\#D8A85F\]\/15 {
+  border-color: rgba(168, 126, 67, 0.15) !important;
+}
+
+/* Hover effects */
+html.light .hover\:bg-\[\#101413\]\/90:hover,
+html.light .hover\:bg-\[\#101413\]\/55:hover {
+  background-color: #EAE6DB !important;
+}
+
+/* Muted text overrides */
+html.light .text-zinc-400,
+html.light .text-zinc-500,
+html.light .text-zinc-650,
+html.light .text-\[\#817B6E\] {
+  color: #6E6A60 !important;
+}
+
+/* Primary text overrides */
+html.light .text-white,
+html.light .text-zinc-300,
+html.light .text-zinc-100,
+html.light .text-\[\#F4EFE5\] {
+  color: #1C1D1A !important;
+}
+
+/* Title text color specifically */
+html.light h1,
+html.light h2,
+html.light h3,
+html.light .text-2xl,
+html.light .text-3xl,
+html.light .text-4xl,
+html.light .text-5xl {
+  color: #1A1C18 !important;
+}
+
+/* Gold text/accents in light mode */
+html.light .text-\[\#D8A85F\],
+html.light .text-accent {
+  color: #A87E43 !important;
+}
+
+html.light .border-\[\#D8A85F\],
+html.light .border-\[\#D8A85F\]\/25 {
+  border-color: rgba(168, 126, 67, 0.3) !important;
+}
+
+html.light .bg-accent {
+  background-color: #A87E43 !important;
+  color: #FFFFFF !important;
+}
+
+/* Success colors */
+html.light .text-emerald-400 {
+  color: #059669 !important; /* emerald-600 */
+}
+html.light .border-emerald-500\/80 {
+  border-color: rgba(5, 150, 105, 0.4) !important;
+}
+html.light .bg-emerald-950\/20 {
+  background-color: rgba(5, 150, 105, 0.08) !important;
+}
+
+/* Slider progress handle and bar */
+html.light .bg-gradient-to-r.from-\[\#8A734B\].via-\[\#D8A85F\].to-\[\#5FCBB9\] {
+  background: linear-gradient(90deg, #A87E43, #D8A85F, #5FCBB9) !important;
+}
+
+/* CRT Screen display */
+html.light .bg-\[\#0a0d0c\] {
+  background-color: #EFECE3 !important;
+  border-color: rgba(168, 126, 67, 0.2) !important;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+html.light .crt-scanlines {
+  background: linear-gradient(
+    rgba(255, 255, 255, 0) 50%, 
+    rgba(0, 0, 0, 0.08) 50%
+  );
+  background-size: 100% 4px;
+}
+html.light .text-\[\#5FCBB9\] {
+  color: #0d8a75 !important; /* darker emerald for readability */
+}
+html.light .animate-\[spin_5s_linear_infinite\] {
+  background: conic-gradient(from 0deg, transparent 50%, rgba(95, 203, 185, 0.12)) !important;
+}
+
+/* Toggle switch */
+html.light .bg-\[\#5FCBB9\]\/20 {
+  background-color: rgba(95, 203, 185, 0.2) !important;
+}
+html.light .border-\[\#5FCBB9\] {
+  border-color: #0d8a75 !important;
+}
+html.light .bg-\[\#5FCBB9\] {
+  background-color: #0d8a75 !important;
+}
+
+/* Console Chassis Override in light mode */
+html.light .bg-\[\#070A09\] {
+  background-color: #EAE6DB !important; /* off-white chassis container */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+}
+
+
