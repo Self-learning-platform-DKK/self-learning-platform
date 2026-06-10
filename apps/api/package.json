@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "build": "prisma generate && tsc",
     "dev": "tsc && node dist/main.js",
     "dev:watch": "tsc -w",
     "start": "node dist/main.js",
