@@ -3,6 +3,8 @@ import { Sora, IBM_Plex_Mono } from 'next/font/google';
 import './globals.css';
 import { AppNav } from '@/components/AppNav';
 
+// Trigger Vercel redeployment with updated root settings
+
 const sora = Sora({ subsets: ['latin'], variable: '--font-sora' });
 const mono = IBM_Plex_Mono({ weight: ['400', '600'], subsets: ['latin'], variable: '--font-mono' });
 
