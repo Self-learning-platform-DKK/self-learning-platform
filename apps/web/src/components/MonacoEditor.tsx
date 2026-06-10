@@ -1,7 +1,7 @@
 'use client';
 
-import Editor, { OnMount } from '@monaco-editor/react';
-import { useRef } from 'react';
+import Editor, { OnMount, useMonaco } from '@monaco-editor/react';
+import { useEffect, useRef } from 'react';
 import { format } from 'sql-formatter';
 
 interface MonacoEditorProps {
@@ -14,52 +14,68 @@ interface MonacoEditorProps {
 
 export function MonacoEditor({ value, onChange, onRun, schema, height = '220px' }: MonacoEditorProps) {
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
+  const monaco = useMonaco();
+  const completionProviderRef = useRef<any>(null);
 
-  const handleMount: OnMount = (editor, monaco) => {
+  useEffect(() => {
+    if (!monaco || !schema) return;
+
+    if (completionProviderRef.current) {
+      completionProviderRef.current.dispose();
+      completionProviderRef.current = null;
+    }
+
+    const disposable = monaco.languages.registerCompletionItemProvider('sql', {
+      provideCompletionItems: (model: import('monaco-editor').editor.ITextModel, position: import('monaco-editor').Position) => {
+        const word = model.getWordUntilPosition(position);
+        const range = {
+          startLineNumber: position.lineNumber,
+          endLineNumber: position.lineNumber,
+          startColumn: word.startColumn,
+          endColumn: word.endColumn,
+        };
+        const tables = Object.keys(schema);
+        const suggestions = [
+          ...tables.map((t) => ({ label: t, kind: monaco.languages.CompletionItemKind.Class, insertText: t, range })),
+          ...tables.flatMap((t) =>
+            schema[t].columns.map((c) => ({
+              label: `${t}.${c.name}`,
+              kind: monaco.languages.CompletionItemKind.Field,
+              insertText: c.name,
+              range,
+            }))
+          ),
+        ];
+        return { suggestions };
+      },
+    });
+
+    completionProviderRef.current = disposable;
+
+    return () => {
+      disposable.dispose();
+      completionProviderRef.current = null;
+    };
+  }, [monaco, schema]);
+
+  const handleMount: OnMount = (editor, monacoInstance) => {
     editorRef.current = editor;
     editor.addAction({
       id: 'run-query',
       label: 'Run Query',
-      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
+      keybindings: [monacoInstance.KeyMod.CtrlCmd | monacoInstance.KeyCode.Enter],
       run: () => onRun?.(),
     });
     editor.addAction({
       id: 'format-sql',
       label: 'Format SQL',
-      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyF],
+      keybindings: [monacoInstance.KeyMod.CtrlCmd | monacoInstance.KeyMod.Shift | monacoInstance.KeyCode.KeyF],
       run: () => {
         try {
           onChange(format(editor.getValue(), { language: 'sqlite' }));
         } catch { /* ignore */ }
       },
     });
-
-    if (schema) {
-      monaco.languages.registerCompletionItemProvider('sql', {
-        provideCompletionItems: (model: import('monaco-editor').editor.ITextModel, position: import('monaco-editor').Position) => {
-          const word = model.getWordUntilPosition(position);
-          const range = {
-            startLineNumber: position.lineNumber,
-            endLineNumber: position.lineNumber,
-            startColumn: word.startColumn,
-            endColumn: word.endColumn,
-          };
-          const tables = Object.keys(schema);
-          const suggestions = [
-            ...tables.map((t) => ({ label: t, kind: monaco.languages.CompletionItemKind.Class, insertText: t, range })),
-            ...tables.flatMap((t) =>
-              schema[t].columns.map((c) => ({
-                label: `${t}.${c.name}`,
-                kind: monaco.languages.CompletionItemKind.Field,
-                insertText: c.name,
-                range,
-              }))
-            ),
-          ];
-          return { suggestions };
-        },
-      });
-    }
   };
 
   return (

@@ -54,7 +54,7 @@ export function ChallengePlayer({
   seedSql: string;
   paths?: LearningPath[];
 }) {
-  const { ready, error, runSQL } = useSqlDatabase(seedSql);
+  const { ready, error, runSQL, resetDb } = useSqlDatabase(seedSql);
   const [sql, setSql] = useState('');
   const [result, setResult] = useState<SqlResult | null>(null);
   const [durationMs, setDurationMs] = useState<number>();
@@ -66,6 +66,17 @@ export function ChallengePlayer({
   const [aiLoading, setAiLoading] = useState(false);
   const [history, setHistory] = useState<string[]>([]);
   const [progress, setProgress] = useState<{ completedSlugs: string[] } | null>(null);
+
+  // Reset database and clear local states when challenge changes
+  useEffect(() => {
+    setSql('');
+    setResult(null);
+    setStatus(null);
+    setSolved(false);
+    setHintLevel(0);
+    setAiText('');
+    resetDb(seedSql);
+  }, [challenge.slug, seedSql, resetDb]);
 
   // Fetch progress to handle completion and unlocking
   useEffect(() => {
@@ -296,7 +307,7 @@ export function ChallengePlayer({
             {solved ? '✓ Solved' : 'Run query'}
           </button>
           
-          <button onClick={() => { setSql(''); setResult(null); setStatus(null); setSolved(false); }} className="px-3 py-2 rounded-md text-sm border border-border text-muted hover:bg-zinc-800 transition-colors">
+          <button onClick={() => { setSql(''); setResult(null); setStatus(null); setSolved(false); setHintLevel(0); setAiText(''); resetDb(seedSql); }} className="px-3 py-2 rounded-md text-sm border border-border text-muted hover:bg-zinc-800 transition-colors">
             Reset
           </button>
           
